@@ -1,0 +1,25 @@
+{
+  "name": "guide-book",
+  "version": "1.0.0",
+  "description": "A Guide Book Generator",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kelvinbiffi/Guide-Book.git"
+  },
+  "keywords": [
+    "style",
+    "guide",
+    "book",
+    "generator"
+  ],
+  "author": "Kelvin Biffi <kelvinbiffi@gmail.com> (https://kelvins.cc)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kelvinbiffi/Guide-Book/issues"
+  },
+  "homepage": "https://github.com/kelvinbiffi/Guide-Book#readme"
+}
