@@ -167,7 +167,7 @@ class GuideBook {
 
         exampleInfo.shift();
         return {
-            module: categorySession[0],
+            category: categorySession[0],
             session: categorySession[1],
             example: exampleInfo.join('\r\n')
         };
