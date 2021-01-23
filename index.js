@@ -1,19 +1,14 @@
 const path = require('path');
 const fs = require('fs');
-//joining path of directory 
 
-//passsing directoryPath and callback function
-// fs.readdir(directoryPath, function (err, files) {
-//     //handling error
-//     if (err) {
-//         return console.log('Unable to scan directory: ' + err);
-//     } 
-//     //listing all files using forEach
-//     files.forEach(function (file) {
-//         // Do whatever you want to do with the file
-//         console.log(file); 
-//     });
-// });
+/**
+ * Guide Book Output Formats Type
+ */
+const GuideBookType = {
+    HTML: 'HTML',
+    MARKDOWN: 'MARKDOWN',
+}
+
 /**
  * 
  * Guide Book Generator Class
@@ -21,6 +16,9 @@ const fs = require('fs');
  */
 class GuideBook {
 
+    /**
+     * Constructor Guide Book Class
+     */
     constructor () {
         this.examples = [];
     }
@@ -33,9 +31,67 @@ class GuideBook {
     generate (settings) {
         if (this.validateSettingsStructure(settings)) {
             const css = this.getStyleCSS(settings.style, settings.charset);
-            const examples = this.getExamplesFromSource(settings.source, settings.charset);
-            console.log(this.examples);
+            this.getExamplesFromSource(settings.source, settings.charset);
+            const categories = this.manageExamplesByCategories();
+            const guideBookStructure = this.generateGuideBookStructure(settings.type, categories);
+            this.createGuideBookFile(settings.output, settings.charset, settings.type, guideBookStructure);
         }
+    }
+
+    /**
+     * 
+     * @param {Strong} output Output Directory/File
+     * @param {String} charset Charset Default UTF-8
+     * @param {GuideBookType} type
+     * @param {String} structure Guide Book Structure
+     */
+    createGuideBookFile (output, charset, type, structure) {
+        console.log(output, charset, type, structure)
+    }
+
+    /**
+     * Generate Guide Book Structure File
+     * 
+     * @param {GuideBookType} type
+     * @param {Array} categories
+     * 
+     * @return {String}
+     */
+    generateGuideBookStructure (type, categories) {
+        let structure;
+        if (type === GuideBookType.HTML) {
+            structure = this.generateHTMLStructure(categories);
+        } else if (type === GuideBookType.MARKDOWN) {
+            structure = this.generateMARKDOWNStructure(categories);
+        }
+        return structure;
+    }
+
+    generateHTMLStructure (categories) {
+        let structure = '';
+        Object.keys(categories).forEach((c) => {
+            console.log(c, categories[c], 'H');
+        });
+    }
+
+    generateMARKDOWNStructure (categories) {
+        let structure = '';
+        Object.keys(categories).forEach((c) => {
+            console.log(c, categories[c], 'H');
+        });
+    }
+
+    manageExamplesByCategories () {
+        const categories = {};
+        this.examples.forEach((e) => {
+            if (!categories.hasOwnProperty(e.category)) {
+                categories[e.category] = [];
+            }
+            const { session, example } = e;
+            const ex = 
+            categories[e.category].push({ session, example });
+        });
+        return categories;
     }
 
     /**
@@ -58,6 +114,13 @@ class GuideBook {
 
         if (!settings.charset) {
             settings.charset = 'utf8';
+        }
+
+        if (settings.type && !GuideBookType.hasOwnProperty(settings.type)) {
+            throw new Error('Invalid: settings properties Guide Book Type, see documentation to know more.');
+        } else {
+            console.log(GuideBookType, 'GuideBookType');
+            settings.type = GuideBookType.HTML;
         }
 
         return true;
@@ -153,25 +216,37 @@ class GuideBook {
      * @param {Array} example rough example
      */
     refineExample(example) {
-        const exampleInfo = example.split('\r\n')
-        if (exampleInfo[0].trim() === '') {
-            exampleInfo.shift();
-        }
-        if (exampleInfo[exampleInfo.length - 1].trim() === '') {
-            exampleInfo.pop();
-        }
-        const categorySession = exampleInfo[0].split('|');
+        let exampleInfo = example.split('\r\n')
+        exampleInfo = this.removeEmptyLines(exampleInfo);
+        let categorySession = exampleInfo.shift();
+        categorySession = categorySession.split('|');
         if (categorySession.length !== 2) {
             throw new Error(`Invalid: Settings ${exampleInfo[0]} do not match pattern CATEGORY|SESSION. See Documentation.`);
         }
 
-        exampleInfo.shift();
         return {
             category: categorySession[0],
             session: categorySession[1],
             example: exampleInfo.join('\r\n')
         };
     }
+
+    /**
+     * Iterate array os example and remove empty lines
+     * 
+     * @param {Array} arrayLines LInes of a examples in array format
+     * 
+     * @return {Array}
+     */
+    removeEmptyLines (arrayLines) {
+        const linesToReturn = [];
+        arrayLines.forEach((l) => {
+            if (l.replace(/ /g,'') !== '') {
+                linesToReturn.push(l);
+            }
+        });
+        return linesToReturn;
+    }
 }
 
-module.exports = { GuideBook };
+module.exports = { GuideBookType, GuideBook };
