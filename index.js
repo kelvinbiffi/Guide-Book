@@ -2,14 +2,6 @@ const path = require('path');
 const fs = require('fs');
 
 /**
- * Guide Book Output Formats Type
- */
-const GuideBookType = {
-    HTML: 'HTML',
-    MARKDOWN: 'MARKDOWN',
-}
-
-/**
  * 
  * Guide Book Generator Class
  * 
@@ -33,8 +25,8 @@ class GuideBook {
             const css = this.getStyleCSS(settings.style, settings.charset);
             this.getExamplesFromSource(settings.source, settings.charset);
             const categories = this.manageExamplesByCategories();
-            const guideBookStructure = this.generateGuideBookStructure(settings.type, categories);
-            this.createGuideBookFile(settings.output, settings.charset, settings.type, guideBookStructure);
+            const guideBookStructure = this.generateHTMLStructure(categories);
+            this.createGuideBookFile(settings.output, settings.charset, guideBookStructure, settings.style);
         }
     }
 
@@ -42,43 +34,97 @@ class GuideBook {
      * 
      * @param {Strong} output Output Directory/File
      * @param {String} charset Charset Default UTF-8
-     * @param {GuideBookType} type
      * @param {String} structure Guide Book Structure
+     * @param {String} style Built style path
      */
-    createGuideBookFile (output, charset, type, structure) {
-        console.log(output, charset, type, structure)
+    createGuideBookFile (output, charset, structure, style) {
+        let outputPath = path.resolve(output);
+        if (outputPath.indexOf('.html') === -1) {
+            outputPath += '\\guidebook.html'
+        }
+
+        this.checkFoldersExistence(outputPath);
+
+        let styleContent = '';
+        const stylepath = style ? path.resolve(style) : false;
+        if (stylepath && fs.existsSync(stylepath)) {
+            styleContent = fs.readFileSync(stylepath, charset);
+        } else {
+            throw new Error('Invalid: Style file looks like do not exists');
+        }
+
+        let base = fs.readFileSync(__dirname + '\\base\\index.html', charset);
+        base = base.toString();
+        base = base.replace('[[CSS]]', `<style>${styleContent}</style>`);
+        base = base.replace('[[HEADER]]', structure.header);
+        base = base.replace('[[BODY]]', structure.body);
+        
+        fs.writeFileSync(outputPath, base);
+        console.log('### Your Guide Book File HTML just been generated! =D ###');
+    }
+
+    checkFoldersExistence (outputPath) {
+        const outputArray = outputPath.split('\\');
+        outputArray.pop();
+        fs.mkdirSync(outputArray.join('\\'), { recursive: true });
     }
 
     /**
      * Generate Guide Book Structure File
      * 
-     * @param {GuideBookType} type
      * @param {Array} categories
      * 
-     * @return {String}
+     * @return {Object}
      */
-    generateGuideBookStructure (type, categories) {
-        let structure;
-        if (type === GuideBookType.HTML) {
-            structure = this.generateHTMLStructure(categories);
-        } else if (type === GuideBookType.MARKDOWN) {
-            structure = this.generateMARKDOWNStructure(categories);
+    generateHTMLStructure (categories) {
+        const structure = {
+            header: '',
+            body: '',
         }
+        Object.keys(categories).forEach((category) => {
+            this.addHTMLItem(structure, category, categories[category]);
+        });
         return structure;
     }
 
-    generateHTMLStructure (categories) {
-        let structure = '';
-        Object.keys(categories).forEach((c) => {
-            console.log(c, categories[c], 'H');
+    addHTMLItem (structure, category, sections) {
+        const categorySlug = this.generateSlug(category);
+        structure.header += `
+            <li class="category-item">
+                <a class="category-item__link" href="#${categorySlug}">${category}</a>
+            </li>
+        `;
+
+
+        structure.body += `
+            <section id="${categorySlug}" class="category-section">
+                <h2>${category}</h2>
+        `;
+        sections.forEach((section) => {
+            const sectionSlug = this.generateSlug(section.session);
+            structure.body += `
+                <article class="category-section__example" id="${sectionSlug}">
+                    <h3>${section.session}</h3>
+                    <pre class="exemplo__code line-numbers">
+                        ...
+                        <code class="language-markup">
+                        ${section.example}
+                        </code>
+                        ...
+                    </pre>
+                </article>
+            `;
         });
+        structure.body += `
+            </section>
+        `;
     }
 
-    generateMARKDOWNStructure (categories) {
-        let structure = '';
-        Object.keys(categories).forEach((c) => {
-            console.log(c, categories[c], 'H');
-        });
+    generateSlug (text) {
+        let slug = text.normalize("NFD");
+        slug = slug.replace(/[\u0300-\u036f]/g, "");
+        slug = slug.replace(/ /g,'-');
+        return slug.toLowerCase();
     }
 
     manageExamplesByCategories () {
@@ -114,13 +160,6 @@ class GuideBook {
 
         if (!settings.charset) {
             settings.charset = 'utf8';
-        }
-
-        if (settings.type && !GuideBookType.hasOwnProperty(settings.type)) {
-            throw new Error('Invalid: settings properties Guide Book Type, see documentation to know more.');
-        } else {
-            console.log(GuideBookType, 'GuideBookType');
-            settings.type = GuideBookType.HTML;
         }
 
         return true;
@@ -164,7 +203,6 @@ class GuideBook {
         }
         
         if (this.isDirectory(sourcePath)) {
-            console.log('is a directory');
             this.iterateSourceFolders(sourcePath, charset);
         } else {
             this.getExampleFromSourceFile(sourcePath, charset);
@@ -249,4 +287,4 @@ class GuideBook {
     }
 }
 
-module.exports = { GuideBookType, GuideBook };
+module.exports = GuideBook;
