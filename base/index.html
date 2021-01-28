@@ -5,22 +5,73 @@
   <meta http-equiv='X-UA-Compatible' content='IE=edge'>
   <title>Guide Book</title>
   <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <link rel="stylesheet" href="https://kelvins.cc/out/assets/plugin/prism.css">
   <link rel="preconnect" href="https://fonts.gstatic.com">
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet">
   <style>
     .gb-font {
-      font-family: 'Open Sans', sans-serif;
+      font-family: 'Source Sans Pro', sans-serif;
+    }
+    .gb-h1 {
+      font-size: 42px;
+      padding: 10px 0;
+    }
+    .gb-h2 {
+      font-size: 32px;
+      margin: 0 0 20px 0;
+      text-decoration: underline;
+    }
+    .gb-h2::before{
+      content: '';
+      display: block;
+      position: relative;
+      margin-top: -60px;
+      visibility: hidden;
+      height: 120px;
+    }
+    .gb-h3 {
+      font-size: 22px;
+      margin: 20px 0;
+    }
+    .gb-header {
+      box-shadow: 10px 0px 8px 4px rgba(0,0,0,0.15);
+      background-color: #F2F2F2;
+      padding: 0 30px 20px 30px;
+      position: fixed;
+      left: 0; top: 0;
+      width: 100%;
+      z-index: 9;
+    }
+    .gb-header .category-item {
+      display: inline-block;
+      margin: 0 15px 0 0;
+    }
+    .gb-header .category-item__link {
+      color: #333333;
     }
     .guide-book {
-      background-color: #F2F2F2;
+      background-color: #FFFFFF;
+    }
+    .guide-book__body {
+      padding: 90px 40px 40px 40px;
+    }
+    .gb-circle {
+      display: inline-block;
+      height: 120px;
+      width: 120px;
+      padding: 50px 10px;
+      margin: 5px;
+      border-radius: 100px;
+      text-align: center;
+      vertical-align: top;
     }
   </style>
   [[CSS]]
 </head>
 <body class="guide-book">
-  <header>
-    <h1>Guide Book</h1>
-    <ul class="guide-book__header">
+  <header class="gb-header">
+    <h1 class="gb-font gb-h1">Guide Book</h1>
+    <ul class="guide-book__header gb-menu">
       [[HEADER]]
     </ul>
   </header>
@@ -32,15 +83,16 @@
   <footer class="guide-book__footer">
     Footer
   </footer>
+  <script src="https://kelvins.cc/out/assets/plugin/prism.js"></script>
   <script>
   (function () {
-    const cache = {
+    var cache = {
       CodeExamples: document.querySelectorAll('.exemplo__code'),
       PrismMarkupExamples: document.querySelectorAll('.language-markup'),
     };
 
     [].slice.call(cache.CodeExamples).forEach((example) => {
-      let codeExample = example.querySelector('code').innerHTML;
+      var codeExample = example.querySelector('code').innerHTML;
       example.insertAdjacentHTML("BeforeBegin", `
         ${codeExample}
 
@@ -49,10 +101,10 @@
     });
 
     [].slice.call(cache.PrismMarkupExamples).forEach((example) => {
-      let innerExample = example.innerHTML.replace(/</g, '&lt').replace(/>/g, '&gt');
+      var innerExample = example.innerHTML.replace(/</g, '&lt').replace(/>/g, '&gt');
       example.innerHTML = innerExample;
     });
-  });
+  })();
   </script>
 </body>
 </html>

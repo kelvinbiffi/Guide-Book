@@ -91,20 +91,21 @@ class GuideBook {
         const categorySlug = this.generateSlug(category);
         structure.header += `
             <li class="category-item">
-                <a class="category-item__link" href="#${categorySlug}">${category}</a>
+                <a class="category-item__link gb-font" href="#${categorySlug}">${category}</a>
             </li>
         `;
 
 
         structure.body += `
+            <hr>
             <section id="${categorySlug}" class="category-section">
-                <h2>${category}</h2>
+                <h2 class="gb-font gb-h2">${category}</h2>
         `;
         sections.forEach((section) => {
             const sectionSlug = this.generateSlug(section.session);
             structure.body += `
                 <article class="category-section__example" id="${sectionSlug}">
-                    <h3>${section.session}</h3>
+                    <h3 class="gb-font gb-h3">(${section.session})</h3>
                     <pre class="exemplo__code line-numbers">
                         ...
                         <code class="language-markup">
