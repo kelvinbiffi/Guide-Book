@@ -105,7 +105,7 @@ class GuideBook {
             const sectionSlug = this.generateSlug(section.session);
             structure.body += `
                 <article class="category-section__example" id="${sectionSlug}">
-                    <h3 class="gb-font gb-h3">(${section.session})</h3>
+                    <h3 class="gb-font gb-h3">${section.session}</h3>
                     <pre class="exemplo__code line-numbers">
                         ...
                         <code class="language-markup">
