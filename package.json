@@ -1,7 +1,7 @@
 {
   "name": "guide-book",
   "version": "1.0.0",
-  "description": "A Guide Book Generator",
+  "description": "A Simple Style Guide Book Generator",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
