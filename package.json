@@ -1,5 +1,5 @@
 {
-  "name": "guide-book",
+  "name": "guide-book-generator",
   "version": "1.0.0",
   "description": "A Simple Style Guide Book Generator",
   "main": "index.js",
