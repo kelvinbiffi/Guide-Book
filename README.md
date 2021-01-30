@@ -37,7 +37,7 @@ First of all on your **Source Files** (SCSS/SASS/STYLUS/LESS) use the below patt
 To setup the **Guide Book** create a JS file at main folder of your project, using as reference the below code:
 
 ```
-const GuideBook = require('@kelvinbiffi/guide-book');
+const GuideBook = require('guide-book');
 
 const settings = {
   style: <BUILT_CSS_FILE>,

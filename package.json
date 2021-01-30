@@ -1,5 +1,5 @@
 {
-  "name": "'@kelvinbiffi/guide-book",
+  "name": "guide-book",
   "version": "1.0.0",
   "description": "A Simple Style Guide Book Generator",
   "main": "index.js",
