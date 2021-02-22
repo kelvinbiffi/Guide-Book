@@ -242,6 +242,7 @@ class GuideBook {
             return;
         }
         let examples = File.split('/*GUIDE');
+        examples.shift();
         examples = examples
             .map((i) => (i.indexOf('*/') > -1 ? i.split('*/')[0] : null))
             .filter((i) => i)
