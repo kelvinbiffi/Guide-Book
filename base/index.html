@@ -9,30 +9,44 @@
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:ital,wght@0,200;0,300;0,400;0,600;0,700;0,900;1,200;1,300;1,400;1,600;1,700;1,900&display=swap" rel="stylesheet">
   <style>
+    html, body {
+      padding: 0;
+      margin: 0;
+      overflow-x: hidden;
+    }
     .gb-font {
       font-family: 'Source Sans Pro', sans-serif;
     }
     .gb-h1 {
       font-size: 42px;
       padding: 10px 0;
+      margin: 0;
+      text-align: center;
+      box-sizing: border-box;
     }
     .gb-h2 {
       font-size: 32px;
       margin: 0 0 20px 0;
       text-decoration: underline;
-    }
-    .gb-h2::before{
-      content: '';
-      display: block;
-      position: relative;
-      margin-top: -60px;
-      visibility: hidden;
-      height: 120px;
+      box-sizing: border-box;
     }
     .gb-h3 {
       font-size: 22px;
       font-weight: 700;
       margin: 20px 0;
+      box-sizing: border-box;
+    }
+    .gb-h2::before, .gb-h3::before{
+      content: '';
+      display: block;
+      position: relative;
+      margin-top: -40px;
+      visibility: hidden;
+      height: 80px;
+      box-sizing: border-box;
+    }
+    .gb-h2:first-of-type:before {
+      height: 150px;
     }
     .gb-header {
       box-shadow: 10px 0px 8px 4px rgba(0,0,0,0.15);
@@ -42,10 +56,51 @@
       left: 0; top: 0;
       width: 100%;
       z-index: 9;
+      box-sizing: border-box;
+      transition: all 0.2s ease-in-out;
+    }
+    .gb-header .gb-h1 {
+      transition: all 0.2s ease-in-out;
+    }
+    .gb-header--small {
+      padding: 5px 30px;
+    }
+    .gb-header--small .gb-h1 {
+      font-size: 24px;
+      padding: 0;
+    }
+    .gb-header__gb-menu {
+      padding: 0;
+      margin: 5px 0;
+    }
+    .gb-header__gb-submenu {
+      position: absolute;
+      left: 0;
+      top: 0;
+      background-color: #FFFFFF;
+      margin: 20px -10px;
+      padding: 0 15px;
+      box-shadow: none;
+      overflow: hidden;
+      max-height: 0;
+      transition: all 0.2s ease-in-out;
+    }
+    .gb-header .category-item:hover .gb-header__gb-submenu {
+      margin: 23px -10px;
+      padding: 15px;
+      box-shadow: 0px 6px 10px 2px rgb(0, 0, 0, 0.4);
+      max-height: 1000px;
     }
     .gb-header .category-item {
       display: inline-block;
       margin: 0 15px 0 0;
+      position: relative;
+    }
+    .gb-header__gb-submenu .category-item {
+      display: block;
+    }
+    .gb-header__gb-submenu .category-item__link {
+      white-space: nowrap;
     }
     .gb-header .category-item__link {
       color: #333333;
@@ -54,7 +109,15 @@
       background-color: #FFFFFF;
     }
     .guide-book__body {
-      padding: 90px 40px 40px 40px;
+      padding: 40px 0;
+    }
+    .guide-book__footer {
+      padding: 40px;
+      box-sizing: border-box;
+    }
+    .guide-book__footer__text {
+      font-size: 16px;
+      text-align: center;
     }
     .gb-circle {
       display: inline-block;
@@ -72,7 +135,7 @@
 <body class="guide-book">
   <header class="gb-header">
     <h1 class="gb-font gb-h1">Guide Book</h1>
-    <ul class="guide-book__header gb-menu">
+    <ul class="gb-header__gb-menu">
       [[HEADER]]
     </ul>
   </header>
@@ -82,15 +145,40 @@
   </main>
 
   <footer class="guide-book__footer">
-    Footer
+    <p class="guide-book__footer__text gb-font">
+      Style Guide Generated with <a href="https://www.npmjs.com/package/guide-book-generator" target="_blank">Guide Book Generator</a>
+    </p>
   </footer>
   <script src="https://kelvins.cc/out/assets/plugin/prism.js"></script>
   <script>
   (function () {
     var cache = {
+      header: document.querySelector('.gb-header'),
+      allCatagoryItems: document.querySelectorAll('.category-item__link'),
       CodeExamples: document.querySelectorAll('.exemplo__code'),
       PrismMarkupExamples: document.querySelectorAll('.language-markup'),
     };
+
+    document.addEventListener('scroll', function(e) {
+      var nVScroll = document.documentElement.scrollTop || document.body.scrollTop;
+      if (nVScroll > 0) {
+        cache.header.classList.add('gb-header--small');
+      } else {
+        cache.header.classList.remove('gb-header--small');
+      }
+    });
+
+    if (cache.allCatagoryItems && cache.allCatagoryItems.length > 0)
+    [].slice.call(cache.allCatagoryItems).forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        var id = e.target.dataset.anchor;
+        var element = document.querySelector('#'+id);
+        if (element) {
+          element.scrollIntoView({block: "start", behavior: "smooth"});
+        }
+      });
+    });
 
     [].slice.call(cache.CodeExamples).forEach((example) => {
       var codeExample = example.querySelector('code').innerHTML;

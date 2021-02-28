@@ -89,12 +89,11 @@ class GuideBook {
 
     addHTMLItem (structure, category, sections) {
         const categorySlug = this.generateSlug(category);
-        structure.header += `
+        let headerMenu = `
             <li class="category-item">
-                <a class="category-item__link gb-font" href="#${categorySlug}">${category}</a>
-            </li>
-        `;
-
+                <a class="category-item__link gb-font" data-anchor="${categorySlug}" href="#${categorySlug}">${category}</a>
+                <ul class="gb-header__gb-submenu">
+        `
 
         structure.body += `
             <hr>
@@ -103,6 +102,11 @@ class GuideBook {
         `;
         sections.forEach((section) => {
             const sectionSlug = this.generateSlug(section.session);
+            headerMenu += `
+                <li class="category-item">
+                    <a class="category-item__link gb-font" data-anchor="${sectionSlug}" href="#${sectionSlug}">${section.session}</a>
+                </li>
+            `
             structure.body += `
                 <article class="category-section__example" id="${sectionSlug}">
                     <h3 class="gb-font gb-h3">${section.session}</h3>
@@ -119,13 +123,28 @@ class GuideBook {
         structure.body += `
             </section>
         `;
+        headerMenu += `
+                </ul>
+            </li>
+        `
+        structure.header += headerMenu;
     }
 
     generateSlug (text) {
-        let slug = text.normalize("NFD");
-        slug = slug.replace(/[\u0300-\u036f]/g, "");
-        slug = slug.replace(/ /g,'-');
-        return slug.toLowerCase();
+        text = text.replace(/^\s+|\s+$/g, '');
+        text = text.toLowerCase();
+
+        var from = "àáäâèéëêìíïîòóöôùúüûñç·/_,:;%#&";
+        var to   = "aaaaeeeeiiiioooouuuunc---------";
+        for (var i=0, l=from.length ; i<l ; i++) {
+            text = text.replace(new RegExp(from.charAt(i), 'g'), to.charAt(i));
+        }
+
+        text = text.replace(/[^a-z0-9 -]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+
+        return text;
     }
 
     manageExamplesByCategories () {
