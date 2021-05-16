@@ -74,3 +74,9 @@ To see examples access this Repository [Guide-Book-Example](https://github.com/k
 ## Dependences
 
 - [PrismJS](https://prismjs.com/)
+
+----------------------------
+
+## LICENCE
+
+This project is licensed under the MIT License - see the [LICENSE.md](./LICENSE.md) file for details
